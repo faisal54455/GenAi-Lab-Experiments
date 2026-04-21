@@ -1,0 +1,449 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "0XCEJcIGkk52",
+        "outputId": "05ca860e-6093-4057-ad97-5626f653a577"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package punkt to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping tokenizers/punkt.zip.\n",
+            "[nltk_data] Downloading package averaged_perceptron_tagger to\n",
+            "[nltk_data]     /root/nltk_data...\n",
+            "[nltk_data]   Unzipping taggers/averaged_perceptron_tagger.zip.\n"
+          ]
+        }
+      ],
+      "source": [
+        "import nltk\n",
+        "nltk.download('punkt')\n",
+        "nltk.download('averaged_perceptron_tagger')\n",
+        "from nltk.tokenize import word_tokenize,sent_tokenize\n",
+        "from nltk.tag import pos_tag"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('averaged_perceptron_tagger_eng')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "LG5LONQem-np",
+        "outputId": "a1eef6e0-858c-470d-e16b-e82a377dd8da"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package averaged_perceptron_tagger_eng to\n",
+            "[nltk_data]     /root/nltk_data...\n",
+            "[nltk_data]   Unzipping taggers/averaged_perceptron_tagger_eng.zip.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from nltk.tag import hmm"
+      ],
+      "metadata": {
+        "id": "ttzMtQEUk4kN"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "text = \"\"\"\n",
+        "I love learning new things.\n",
+        "Machine learning is very interesting.\n",
+        "Data science helps students learn.\n",
+        "I enjoy working with data models.\n",
+        "Artificial intelligence is powerful.\n",
+        "\"\"\""
+      ],
+      "metadata": {
+        "id": "ik5aPfl_lKFk"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('punkt_tab')\n",
+        "sentences = sent_tokenize(text)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "XNCFkcHulVHZ",
+        "outputId": "22c859d0-903a-4b54-da3b-d2961e310810"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package punkt_tab to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping tokenizers/punkt_tab.zip.\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "tokenize_words = []\n",
+        "for sent in sentences:\n",
+        "  words = word_tokenize(sent)\n",
+        "  tokenize_words.append(words)"
+      ],
+      "metadata": {
+        "id": "_kDuTQmGlmeE"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "tagged_sentences =[]\n",
+        "for sent in tokenize_words:\n",
+        "  tag = pos_tag(sent)\n",
+        "  tagged_sentences.append(tag)"
+      ],
+      "metadata": {
+        "id": "AWZb7MKEmLwH"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for s in tagged_sentences:\n",
+        "  print(s)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ck9fmN-Bm4XK",
+        "outputId": "680d174c-6b83-4740-8d73-9833b700ca29"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[('I', 'PRP'), ('love', 'VBP'), ('learning', 'VBG'), ('new', 'JJ'), ('things', 'NNS'), ('.', '.')]\n",
+            "[('Machine', 'NN'), ('learning', 'NN'), ('is', 'VBZ'), ('very', 'RB'), ('interesting', 'JJ'), ('.', '.')]\n",
+            "[('Data', 'NNP'), ('science', 'NN'), ('helps', 'VBZ'), ('students', 'NNS'), ('learn', 'NN'), ('.', '.')]\n",
+            "[('I', 'PRP'), ('enjoy', 'VBP'), ('working', 'VBG'), ('with', 'IN'), ('data', 'NNS'), ('models', 'NNS'), ('.', '.')]\n",
+            "[('Artificial', 'JJ'), ('intelligence', 'NN'), ('is', 'VBZ'), ('powerful', 'JJ'), ('.', '.')]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "trainer = hmm.HiddenMarkovModelTrainer()\n",
+        "hmm_model = trainer.train_supervised(tagged_sentences)"
+      ],
+      "metadata": {
+        "id": "UznH1PeunJlr"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#parts of speech tagging using hmm\n",
+        "predicted_tags = hmm_model.tag(tokenize_words[0])\n",
+        "print(predicted_tags)\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "YU0Rp0afn8_V",
+        "outputId": "d129517e-744f-40d6-c7c5-ead2f5132d82"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[('I', 'PRP'), ('love', 'VBP'), ('learning', 'VBG'), ('new', 'JJ'), ('things', 'NNS'), ('.', '.')]\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "/usr/local/lib/python3.12/dist-packages/nltk/tag/hmm.py:333: RuntimeWarning: overflow encountered in cast\n",
+            "  X[i, j] = self._transitions[si].logprob(self._states[j])\n",
+            "/usr/local/lib/python3.12/dist-packages/nltk/tag/hmm.py:335: RuntimeWarning: overflow encountered in cast\n",
+            "  O[i, k] = self._output_logprob(si, self._symbols[k])\n",
+            "/usr/local/lib/python3.12/dist-packages/nltk/tag/hmm.py:331: RuntimeWarning: overflow encountered in cast\n",
+            "  P[i] = self._priors.logprob(si)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for i in tokenize_words:\n",
+        "  predicted_tags = hmm_model.tag(i)\n",
+        "  print(predicted_tags)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "WBa4hFfYopYy",
+        "outputId": "d40ace8e-75a3-41b6-c4ce-414745b1b0e7"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[('I', 'PRP'), ('love', 'VBP'), ('learning', 'VBG'), ('new', 'JJ'), ('things', 'NNS'), ('.', '.')]\n",
+            "[('Machine', 'NN'), ('learning', 'NN'), ('is', 'VBZ'), ('very', 'RB'), ('interesting', 'JJ'), ('.', '.')]\n",
+            "[('Data', 'NNP'), ('science', 'NN'), ('helps', 'VBZ'), ('students', 'NNS'), ('learn', 'NN'), ('.', '.')]\n",
+            "[('I', 'PRP'), ('enjoy', 'VBP'), ('working', 'VBG'), ('with', 'IN'), ('data', 'NNS'), ('models', 'NNS'), ('.', '.')]\n",
+            "[('Artificial', 'JJ'), ('intelligence', 'NN'), ('is', 'VBZ'), ('powerful', 'JJ'), ('.', '.')]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import random\n",
+        "\n",
+        "def generate_random(hmm_model, length=10):\n",
+        "    sentence = []\n",
+        "\n",
+        "    # initial hidden state (POS tag)\n",
+        "    state = random.choice(list(hmm_model._states))\n",
+        "\n",
+        "    for _ in range(length):\n",
+        "        # emission: state -> word\n",
+        "        word = hmm_model._outputs[state].generate()\n",
+        "        sentence.append(word)\n",
+        "\n",
+        "        # transition: state -> next state\n",
+        "        state = hmm_model._transitions[state].generate()\n",
+        "\n",
+        "    return sentence\n"
+      ],
+      "metadata": {
+        "id": "4sDXnB6TymVC"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "hmm_model._states"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "SquBwbFK5g-t",
+        "outputId": "a90fa050-8035-473e-ce7a-f30c084f66ca"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "['PRP', 'VBP', 'VBG', 'JJ', 'NNS', '.', 'NN', 'VBZ', 'RB', 'NNP', 'IN']"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 13
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "generated = generate_random(hmm_model, 10)\n",
+        "print(\"Generated sentence:\")\n",
+        "print(\" \".join(generated))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 356
+        },
+        "id": "kveFsCmZ_Hue",
+        "outputId": "44a50d75-d037-49ee-c1f6-05407cd1b76b"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "/usr/local/lib/python3.12/dist-packages/nltk/probability.py:589: UserWarning: Probability distribution <MLEProbDist based on 0 samples> sums to 0.0; generate() is returning an arbitrary sample.\n",
+            "  warnings.warn(\n"
+          ]
+        },
+        {
+          "output_type": "error",
+          "ename": "IndexError",
+          "evalue": "Cannot choose from an empty sequence",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mIndexError\u001b[0m                                Traceback (most recent call last)",
+            "\u001b[0;32m/tmp/ipykernel_13573/3037879750.py\u001b[0m in \u001b[0;36m<cell line: 0>\u001b[0;34m()\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mgenerated\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mgenerate_random\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mhmm_model\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;36m10\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      2\u001b[0m \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m\"Generated sentence:\"\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      3\u001b[0m \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m\" \"\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mjoin\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mgenerated\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/tmp/ipykernel_13573/2050505093.py\u001b[0m in \u001b[0;36mgenerate_random\u001b[0;34m(hmm_model, length)\u001b[0m\n\u001b[1;32m     13\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     14\u001b[0m         \u001b[0;31m# transition: state -> next state\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 15\u001b[0;31m         \u001b[0mstate\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mhmm_model\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_transitions\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mstate\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mgenerate\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m     16\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     17\u001b[0m     \u001b[0;32mreturn\u001b[0m \u001b[0msentence\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.12/dist-packages/nltk/probability.py\u001b[0m in \u001b[0;36mgenerate\u001b[0;34m(self)\u001b[0m\n\u001b[1;32m    591\u001b[0m                 \u001b[0;34m\" is returning an arbitrary sample.\"\u001b[0m \u001b[0;34m%\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mp_init\u001b[0m \u001b[0;34m-\u001b[0m \u001b[0mp\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    592\u001b[0m             )\n\u001b[0;32m--> 593\u001b[0;31m         \u001b[0;32mreturn\u001b[0m \u001b[0mrandom\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mchoice\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mlist\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0msamples\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    594\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    595\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/lib/python3.12/random.py\u001b[0m in \u001b[0;36mchoice\u001b[0;34m(self, seq)\u001b[0m\n\u001b[1;32m    345\u001b[0m         \u001b[0;31m# because bool(numpy.array()) raises a ValueError.\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    346\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0mlen\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mseq\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 347\u001b[0;31m             \u001b[0;32mraise\u001b[0m \u001b[0mIndexError\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'Cannot choose from an empty sequence'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    348\u001b[0m         \u001b[0;32mreturn\u001b[0m \u001b[0mseq\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_randbelow\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mlen\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mseq\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    349\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mIndexError\u001b[0m: Cannot choose from an empty sequence"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# @title\n",
+        "from nltk.tokenize import sent_tokenize, word_tokenize\n",
+        "from nltk import pos_tag\n",
+        "from nltk.tag import hmm\n",
+        "import nltk, random\n",
+        "\n",
+        "nltk.download('punkt')\n",
+        "nltk.download('averaged_perceptron_tagger')\n",
+        "\n",
+        "text = \"\"\"\n",
+        "I love learning new things\n",
+        "Machine learning is interesting\n",
+        "Data science helps students\n",
+        "I enjoy learning models\n",
+        "Artificial intelligence is powerful\n",
+        "\"\"\"\n",
+        "\n",
+        "sentences = sent_tokenize(text)\n",
+        "\n",
+        "tagged_sentences = []\n",
+        "for sent in sentences:\n",
+        "    words = word_tokenize(sent)\n",
+        "    tagged_sentences.append(pos_tag(words))\n",
+        "\n",
+        "print(\"Tagged sentences:\", tagged_sentences)"
+      ],
+      "metadata": {
+        "id": "xhzegG7H9CCO"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# @title\n",
+        "trainer = hmm.HiddenMarkovModelTrainer()\n",
+        "hmm_model = trainer.train_supervised(tagged_sentences)\n",
+        "\n",
+        "print(\"States learned:\", hmm_model._states)"
+      ],
+      "metadata": {
+        "id": "9Pdcl9x7-cAw"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# @title\n",
+        "def generate_sentence(model, length=10):\n",
+        "    sentence = []\n",
+        "    state = random.choice(list(model._states))\n",
+        "\n",
+        "    for _ in range(length):\n",
+        "        word = model._outputs[state].generate()\n",
+        "        sentence.append(word)\n",
+        "        state = model._transitions[state].generate()\n",
+        "\n",
+        "    return sentence\n",
+        "\n",
+        "generated = generate_sentence(hmm_model, 10)\n",
+        "print(\"Generated sentence:\")\n",
+        "print(\" \".join(generated))"
+      ],
+      "metadata": {
+        "id": "KkZEjgHo-evm"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "L5JgoD6H-hNO"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}

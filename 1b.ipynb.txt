@@ -1,0 +1,219 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "jvCOtIfwXDzn"
+      },
+      "outputs": [],
+      "source": [
+        "import nltk\n",
+        "from nltk.corpus import brown\n",
+        "from nltk.tag import hmm\n",
+        "import random"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('punkt')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1b2c-e-2XuBC",
+        "outputId": "6a182bbb-fd74-4ef5-ed76-195a4b582e3b"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package punkt to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping tokenizers/punkt.zip.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('brown')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "qDzqIUFgX2sa",
+        "outputId": "f862d312-cbd1-45fd-aaae-99b70856ee30"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package brown to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping corpora/brown.zip.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 3
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "tagged_sentence = brown.tagged_sents()"
+      ],
+      "metadata": {
+        "id": "3opSGzEFYEQf"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "sentences = tagged_sentence[:1000]"
+      ],
+      "metadata": {
+        "id": "z5cf73RvYRLZ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(sentences[0])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "gO9qQGAFYd08",
+        "outputId": "3e3156c4-d739-48ab-d955-1a0fc4928ec3"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[('The', 'AT'), ('Fulton', 'NP-TL'), ('County', 'NN-TL'), ('Grand', 'JJ-TL'), ('Jury', 'NN-TL'), ('said', 'VBD'), ('Friday', 'NR'), ('an', 'AT'), ('investigation', 'NN'), ('of', 'IN'), (\"Atlanta's\", 'NP$'), ('recent', 'JJ'), ('primary', 'NN'), ('election', 'NN'), ('produced', 'VBD'), ('``', '``'), ('no', 'AT'), ('evidence', 'NN'), (\"''\", \"''\"), ('that', 'CS'), ('any', 'DTI'), ('irregularities', 'NNS'), ('took', 'VBD'), ('place', 'NN'), ('.', '.')]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "train = hmm.HiddenMarkovModelTrainer()\n",
+        "hmm_model = train.train_supervised(sentences)"
+      ],
+      "metadata": {
+        "id": "f2r9PFNIYhF7"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "def generate_sentence(hmm_model,length):\n",
+        "  words=[]\n",
+        "  state = random.choice(list(hmm_model._states))\n",
+        "  for i in range(length):\n",
+        "    word = hmm_model._outputs[state].generate()\n",
+        "    words.append(word)\n",
+        "    state=hmm_model._transitions[state].generate()\n",
+        "  return words\n"
+      ],
+      "metadata": {
+        "id": "jDy0sk4KY8is"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for i in range(5):\n",
+        "    generate = generate_sentence(hmm_model,10)\n",
+        "    print(\" \".join(generate))\n",
+        "    print()\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "vgioKPEHaluY",
+        "outputId": "3d5e4384-cdce-47de-f6d1-f4ce0af90178"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "( Sabbath with then 1 policemen to what under the\n",
+            "\n",
+            "States Mayoral Race to take , and stands as vehicular\n",
+            "\n",
+            "greater , he would Gursel 16 persons on services as\n",
+            "\n",
+            "ours '' to 300 little formula , it called that\n",
+            "\n",
+            "Federal climate '' . . . . . . .\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "WLInKleXayaB"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}

@@ -1,0 +1,647 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "674nMKXRHKBz",
+        "outputId": "95b3e225-8b32-41d0-f2d7-bab773c04932"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Requirement already satisfied: nltk in /usr/local/lib/python3.12/dist-packages (3.9.1)\n",
+            "Collecting gensim\n",
+            "  Downloading gensim-4.4.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (8.4 kB)\n",
+            "Requirement already satisfied: click in /usr/local/lib/python3.12/dist-packages (from nltk) (8.3.1)\n",
+            "Requirement already satisfied: joblib in /usr/local/lib/python3.12/dist-packages (from nltk) (1.5.3)\n",
+            "Requirement already satisfied: regex>=2021.8.3 in /usr/local/lib/python3.12/dist-packages (from nltk) (2025.11.3)\n",
+            "Requirement already satisfied: tqdm in /usr/local/lib/python3.12/dist-packages (from nltk) (4.67.3)\n",
+            "Requirement already satisfied: numpy>=1.18.5 in /usr/local/lib/python3.12/dist-packages (from gensim) (2.0.2)\n",
+            "Requirement already satisfied: scipy>=1.7.0 in /usr/local/lib/python3.12/dist-packages (from gensim) (1.16.3)\n",
+            "Requirement already satisfied: smart_open>=1.8.1 in /usr/local/lib/python3.12/dist-packages (from gensim) (7.5.1)\n",
+            "Requirement already satisfied: wrapt in /usr/local/lib/python3.12/dist-packages (from smart_open>=1.8.1->gensim) (2.1.2)\n",
+            "Downloading gensim-4.4.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (27.9 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m27.9/27.9 MB\u001b[0m \u001b[31m36.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: gensim\n",
+            "Successfully installed gensim-4.4.0\n"
+          ]
+        }
+      ],
+      "source": [
+        "pip install nltk gensim"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import nltk\n",
+        "from nltk.corpus import brown\n",
+        "from gensim.models import Word2Vec"
+      ],
+      "metadata": {
+        "id": "psqhH_1UHNGr"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('brown')"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "P0AuZ0G_HUbD",
+        "outputId": "8a979c61-ac3a-402a-96e7-0ca0fc2f79ff"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package brown to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping corpora/brown.zip.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "True"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 3
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "sentences = brown.sents()[:5000]\n",
+        "\n",
+        "# convert to lowercase\n",
+        "sentences = [[word.lower() for word in sent] for sent in sentences]\n",
+        "\n",
+        "print(\"Total sentences:\", len(sentences))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "vcYr-llHHe2N",
+        "outputId": "243e59d0-33b7-4b23-a6f2-3bfaacba5642"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Total sentences: 5000\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "query_words = [\"money\", \"government\", \"student\", \"computer\"]"
+      ],
+      "metadata": {
+        "id": "-7FESr4qHfrm"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "def train_model(vector_size, window):\n",
+        "\n",
+        "    model = Word2Vec(\n",
+        "        sentences,\n",
+        "        vector_size=vector_size,\n",
+        "        window=window,\n",
+        "        sg=1,            # Skip-gram\n",
+        "        min_count=2,\n",
+        "        workers=4\n",
+        "    )\n",
+        "\n",
+        "    return model"
+      ],
+      "metadata": {
+        "id": "OL0Hod8HHrVW"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "settings = [\n",
+        "    (50, 3),\n",
+        "    (50, 5),\n",
+        "    (100, 3),\n",
+        "    (100, 5)\n",
+        "]\n",
+        "\n",
+        "models = {}\n",
+        "\n",
+        "for vec, win in settings:\n",
+        "    print(f\"\\nTraining model: vector_size={vec}, window={win}\")\n",
+        "    models[(vec, win)] = train_model(vec, win)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "DQAX5TtBHvKI",
+        "outputId": "fc3b0355-0f89-455b-a691-e225709ccdc9"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Training model: vector_size=50, window=3\n",
+            "\n",
+            "Training model: vector_size=50, window=5\n",
+            "\n",
+            "Training model: vector_size=100, window=3\n",
+            "\n",
+            "Training model: vector_size=100, window=5\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model = models[(50,3)]\n",
+        "\n",
+        "print(\"\\nEmbedding vector for word 'money':\")\n",
+        "print(model.wv['money'][:10])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "wBSQ_tZcHyoo",
+        "outputId": "aeb7ff0e-c583-4be7-845b-37300a341abc"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Embedding vector for word 'money':\n",
+            "[ 0.07699939 -0.0512654  -0.15421005  0.14026195 -0.06271333 -0.21572937\n",
+            "  0.43434325  0.5367496  -0.51276875 -0.22131881]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for params, model in models.items():\n",
+        "\n",
+        "    vec, win = params\n",
+        "    print(\"\\n==============================\")\n",
+        "    print(f\"Vector Size: {vec} | Window: {win}\")\n",
+        "    print(\"==============================\")\n",
+        "\n",
+        "    for word in query_words:\n",
+        "\n",
+        "        if word in model.wv:\n",
+        "            print(f\"\\nTop 8 similar words to '{word}':\")\n",
+        "\n",
+        "            similar_words = model.wv.most_similar(word, topn=8)\n",
+        "\n",
+        "            for w, score in similar_words:\n",
+        "                print(w, round(score,3))\n",
+        "\n",
+        "        else:\n",
+        "            print(f\"{word} not in vocabulary\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "cJq4vNsMH64Q",
+        "outputId": "a13458e7-ec5d-4636-e828-45d94fc9d736"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "==============================\n",
+            "Vector Size: 50 | Window: 3\n",
+            "==============================\n",
+            "\n",
+            "Top 8 similar words to 'money':\n",
+            "vote 0.997\n",
+            "sense 0.996\n",
+            "hospital 0.996\n",
+            "position 0.996\n",
+            "big 0.995\n",
+            "show 0.995\n",
+            "company 0.995\n",
+            "put 0.995\n",
+            "\n",
+            "Top 8 similar words to 'government':\n",
+            "case 0.994\n",
+            "family 0.99\n",
+            "meeting 0.99\n",
+            "same 0.989\n",
+            "back 0.989\n",
+            "part 0.989\n",
+            "member 0.989\n",
+            "result 0.988\n",
+            "\n",
+            "Top 8 similar words to 'student':\n",
+            "share 0.997\n",
+            "wages 0.996\n",
+            "race 0.996\n",
+            "candidate 0.996\n",
+            "green 0.996\n",
+            "district 0.996\n",
+            "round 0.996\n",
+            "despite 0.996\n",
+            "computer not in vocabulary\n",
+            "\n",
+            "==============================\n",
+            "Vector Size: 50 | Window: 5\n",
+            "==============================\n",
+            "\n",
+            "Top 8 similar words to 'money':\n",
+            "merely 0.995\n",
+            "half 0.995\n",
+            "leadership 0.995\n",
+            "effect 0.994\n",
+            "effort 0.994\n",
+            "industry 0.994\n",
+            "rule 0.994\n",
+            "power 0.993\n",
+            "\n",
+            "Top 8 similar words to 'government':\n",
+            "operation 0.987\n",
+            "order 0.987\n",
+            "increase 0.986\n",
+            "service 0.986\n",
+            "history 0.986\n",
+            "organization 0.986\n",
+            "pay 0.986\n",
+            "soviet 0.986\n",
+            "\n",
+            "Top 8 similar words to 'student':\n",
+            "1958 0.996\n",
+            "share 0.996\n",
+            "round 0.995\n",
+            "date 0.995\n",
+            "term 0.995\n",
+            "nation's 0.995\n",
+            "despite 0.995\n",
+            "maintenance 0.995\n",
+            "computer not in vocabulary\n",
+            "\n",
+            "==============================\n",
+            "Vector Size: 100 | Window: 3\n",
+            "==============================\n",
+            "\n",
+            "Top 8 similar words to 'money':\n",
+            "policy 0.997\n",
+            "effect 0.997\n",
+            "single 0.997\n",
+            "present 0.997\n",
+            "industry 0.997\n",
+            "question 0.997\n",
+            "approach 0.997\n",
+            "lead 0.997\n",
+            "\n",
+            "Top 8 similar words to 'government':\n",
+            "part 0.995\n",
+            "back 0.995\n",
+            "vote 0.994\n",
+            "course 0.994\n",
+            "people 0.994\n",
+            "family 0.994\n",
+            "laos 0.994\n",
+            "field 0.993\n",
+            "\n",
+            "Top 8 similar words to 'student':\n",
+            "counties 0.998\n",
+            "hole 0.998\n",
+            "green 0.998\n",
+            "died 0.997\n",
+            "plane 0.997\n",
+            "near 0.997\n",
+            "11 0.997\n",
+            "9th 0.997\n",
+            "computer not in vocabulary\n",
+            "\n",
+            "==============================\n",
+            "Vector Size: 100 | Window: 5\n",
+            "==============================\n",
+            "\n",
+            "Top 8 similar words to 'money':\n",
+            "large 0.997\n",
+            "act 0.997\n",
+            "paid 0.996\n",
+            "used 0.996\n",
+            "job 0.996\n",
+            "support 0.995\n",
+            "lead 0.995\n",
+            "amount 0.995\n",
+            "\n",
+            "Top 8 similar words to 'government':\n",
+            "increase 0.995\n",
+            "power 0.994\n",
+            "world 0.994\n",
+            "congress 0.993\n",
+            "series 0.993\n",
+            "laos 0.993\n",
+            "early 0.993\n",
+            "family 0.993\n",
+            "\n",
+            "Top 8 similar words to 'student':\n",
+            "music 0.998\n",
+            "boston 0.997\n",
+            "block 0.997\n",
+            "giants 0.997\n",
+            "elected 0.997\n",
+            "25 0.997\n",
+            "20 0.997\n",
+            "ended 0.997\n",
+            "computer not in vocabulary\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "j5hSh6FEIEqQ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "sentences = [\n",
+        "\"the student reads a book\",\n",
+        "\"the teacher teaches the student\",\n",
+        "\"students study in school\",\n",
+        "\"the school has many teachers\",\n",
+        "\"the boy plays football\",\n",
+        "\"the girl reads a story book\",\n",
+        "\"the government builds new schools\",\n",
+        "\"the company pays salary to employees\",\n",
+        "\"money is used to buy things\",\n",
+        "\"the bank manages money\",\n",
+        "\"the computer processes data\",\n",
+        "\"students use computer for learning\",\n",
+        "\"the teacher uses computer in class\",\n",
+        "\"education improves knowledge\",\n",
+        "\"students gain knowledge from books\"\n",
+        "]"
+      ],
+      "metadata": {
+        "id": "Zzvejh3LK8jp"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import nltk\n",
+        "from gensim.models import Word2Vec\n",
+        "from nltk.tokenize import word_tokenize"
+      ],
+      "metadata": {
+        "id": "AJf81u9yLDyo"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "nltk.download('punkt_tab')\n",
+        "tokenized_sentences = [word_tokenize(sent.lower()) for sent in sentences]\n",
+        "\n",
+        "print(\"Tokenized Sentences:\")\n",
+        "print(tokenized_sentences)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "JrfcHBfoLJZV",
+        "outputId": "764f69c7-77b4-43b7-fc48-ee6b0b63304e"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "[nltk_data] Downloading package punkt_tab to /root/nltk_data...\n",
+            "[nltk_data]   Unzipping tokenizers/punkt_tab.zip.\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Tokenized Sentences:\n",
+            "[['the', 'student', 'reads', 'a', 'book'], ['the', 'teacher', 'teaches', 'the', 'student'], ['students', 'study', 'in', 'school'], ['the', 'school', 'has', 'many', 'teachers'], ['the', 'boy', 'plays', 'football'], ['the', 'girl', 'reads', 'a', 'story', 'book'], ['the', 'government', 'builds', 'new', 'schools'], ['the', 'company', 'pays', 'salary', 'to', 'employees'], ['money', 'is', 'used', 'to', 'buy', 'things'], ['the', 'bank', 'manages', 'money'], ['the', 'computer', 'processes', 'data'], ['students', 'use', 'computer', 'for', 'learning'], ['the', 'teacher', 'uses', 'computer', 'in', 'class'], ['education', 'improves', 'knowledge'], ['students', 'gain', 'knowledge', 'from', 'books']]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "model = Word2Vec(\n",
+        "tokenized_sentences,\n",
+        "vector_size=50,\n",
+        "window=3,\n",
+        "min_count=1,\n",
+        "sg=1\n",
+        ")"
+      ],
+      "metadata": {
+        "id": "itMov-oYLMnJ"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"\\nVocabulary:\")\n",
+        "print(list(model.wv.index_to_key))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "_n415fTGLfW4",
+        "outputId": "52b281b5-ab6b-44d6-f038-56bd97f37691"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Vocabulary:\n",
+            "['the', 'computer', 'students', 'knowledge', 'money', 'to', 'school', 'in', 'teacher', 'book', 'a', 'reads', 'student', 'books', 'from', 'gain', 'improves', 'education', 'class', 'uses', 'learning', 'for', 'use', 'data', 'processes', 'manages', 'bank', 'things', 'buy', 'used', 'is', 'employees', 'salary', 'pays', 'company', 'schools', 'new', 'builds', 'government', 'story', 'girl', 'football', 'plays', 'boy', 'teachers', 'many', 'has', 'study', 'teaches']\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(\"\\nEmbedding for word 'student':\")\n",
+        "print(model.wv['student'])"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "4_uK7GTvLkuB",
+        "outputId": "28637d26-3e61-44b8-dd5e-2b690981f4e0"
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Embedding for word 'student':\n",
+            "[ 1.62645429e-02 -8.91466811e-03 -2.13671452e-03  2.01272964e-03\n",
+            " -3.82227910e-04  2.29635485e-03  1.22277215e-02 -4.05430801e-05\n",
+            " -6.49193069e-03 -3.02145723e-03  1.17945978e-02  3.02820443e-03\n",
+            " -1.44852395e-03  1.86664946e-02 -9.84256715e-03 -1.67681929e-03\n",
+            "  1.83508229e-02  1.34988548e-02  3.00571206e-03 -1.77651215e-02\n",
+            "  2.29749200e-03 -4.57651122e-03  1.87364742e-02  2.41985568e-03\n",
+            "  2.98012723e-03  4.81281988e-03 -3.67201329e-03 -9.99926776e-03\n",
+            "  4.64859011e-04 -4.02836083e-03  1.32018663e-02  1.78802460e-02\n",
+            " -1.34950876e-03  5.95402950e-03 -1.22153088e-02  3.39864963e-03\n",
+            " -1.38524650e-02 -1.73880532e-02 -1.18004056e-02 -1.79129504e-02\n",
+            "  1.45551898e-02 -1.15440628e-02  1.65527035e-02 -1.44870905e-02\n",
+            "  6.84334990e-03  1.93499979e-02 -1.55708957e-02 -1.98901147e-02\n",
+            " -8.65829270e-03 -5.36626112e-03]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "query_words = [\"student\",\"computer\",\"money\"]"
+      ],
+      "metadata": {
+        "id": "2RpEBifPLp1U"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "for word in query_words:\n",
+        "    print(f\"\\nTop 5 similar words to '{word}':\")\n",
+        "    similar_words = model.wv.most_similar(word, topn=5)\n",
+        "\n",
+        "    for w, score in similar_words:\n",
+        "        print(w, round(score,3))"
+      ],
+      "metadata": {
+        "id": "8u4ngpoOLvcY",
+        "outputId": "e3d9df51-d3ad-4e05-c098-6407db1ac3bb",
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        }
+      },
+      "execution_count": null,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Top 5 similar words to 'student':\n",
+            "pays 0.191\n",
+            "knowledge 0.19\n",
+            "from 0.189\n",
+            "salary 0.184\n",
+            "government 0.175\n",
+            "\n",
+            "Top 5 similar words to 'computer':\n",
+            "is 0.376\n",
+            "improves 0.23\n",
+            "buy 0.221\n",
+            "manages 0.219\n",
+            "pays 0.195\n",
+            "\n",
+            "Top 5 similar words to 'money':\n",
+            "girl 0.194\n",
+            "students 0.166\n",
+            "new 0.166\n",
+            "books 0.153\n",
+            "use 0.138\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "vkuOouuhLyrn"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
